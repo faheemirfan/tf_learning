@@ -1,6 +1,6 @@
 import tensorflow as tf
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense
+from tensorflow.keras.layers import Dense,Dropout
 from sklearn.datasets import load_diabetes
 from sklearn.model_selection import train_test_split
 import matplotlib.pyplot as plt 
@@ -16,19 +16,25 @@ targets = (targets - targets.mean())/targets.std()
 train_data,test_data,train_targets,test_targets = train_test_split(data,targets,test_size=0.1)
 
 
-def get_model():
+def get_model(wd,rate):
     model = Sequential([
-        Dense(128,activation='relu',input_shape=(train_data.shape[1],)),
-        Dense(128,activation='relu'),
-        Dense(128,activation='relu'),
-        Dense(128,activation='relu'),
-        Dense(128,activation='relu'),
-        Dense(128,activation='relu'),
+        Dense(128,activation='relu',input_shape=(train_data.shape[1],),kernel_regularizer=tf.keras.regularizers.l2(wd)),
+        Dropout(rate),
+        Dense(128,activation='relu',kernel_regularizer=tf.keras.regularizers.l1(wd)),
+        Dropout(rate),
+        Dense(128,activation='relu',kernel_regularizer=tf.keras.regularizers.l1(wd)),
+        Dropout(rate),
+        Dense(128,activation='relu',kernel_regularizer=tf.keras.regularizers.l1(wd)),
+        Dropout(rate),
+        Dense(128,activation='relu',kernel_regularizer=tf.keras.regularizers.l1(wd)),
+        Dropout(rate),
+        Dense(128,activation='relu',kernel_regularizer=tf.keras.regularizers.l1(wd)),
+        Dropout(rate),
         Dense(1)
     ])
     return model
 
-model = get_model()
+model = get_model(0.001,0.0)
 model.summary()
 
 model.compile(optimizer="adam",loss="mse",metrics=["mae"])
