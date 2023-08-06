@@ -49,5 +49,28 @@ checkpoint_best_only = get_checkpoint_best_only()
 early_stopping = get_early_stopping()
 
 
-callbacks = [checkpoint_every_epoch, checkpoint_best_only, early_stopping]
-model.fit(train_data,train_labels,epochs=50,validation_data=(test_data,test_labels),callbacks=callbacks,batch_size=12)
+# callbacks = [checkpoint_every_epoch, checkpoint_best_only, early_stopping]
+# model.fit(train_data,train_labels,epochs=50,validation_data=(test_data,test_labels),callbacks=callbacks,batch_size=12)
+
+#
+# return last instance of model
+#
+def get_model_last_epoch(model):
+    model.load_weights(tf.train.latest_checkpoint('checkpoints_every_epoch'))
+    return model
+
+
+#
+#
+#
+def get_model_best_epoch(model):
+    model.load_weights(tf.train.latest_checkpoint('checkpoints_best_only'))
+    return model
+
+    
+model_last_epoch = get_model_last_epoch(get_new_model((64,64,3)))
+model_best_epoch = get_model_best_epoch(get_new_model((64,64,3)))
+
+    
+get_test_accuracy(model_last_epoch,test_data,test_labels)
+get_test_accuracy(model_best_epoch,test_data,test_labels)
